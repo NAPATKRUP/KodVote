@@ -35,7 +35,7 @@ def register(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         if (User.objects.filter(username=username).exists()):
-            context['error'] = 'Username is already used'
+            context['error'] = 'Username is already used!'
             context['fname'] = first_name
             context['lname'] = last_name
             context['email'] = email
@@ -68,7 +68,7 @@ def change_password(request):
         password1 = request.POST.get('npass1')
         password2 = request.POST.get('npass2')
         if password1 != password2:
-            context['error'] = 'Password not match'
+            context['error'] = 'Password not match!'
             return render(request, template_name='management/change_password.html', context=context)
         user.set_password(password1)
         user.save()

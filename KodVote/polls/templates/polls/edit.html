@@ -47,9 +47,33 @@
                             <a href="{% url 'close_poll' id %}" class="btn btn-danger col-6 centerpage h-25 mt-4 p-3"><b>Close</b></a>
                         {% endif %}
                     </div>
-                    <button type="submit" class="btn btn-warning"><b>Edit</b></button>
+                    <button type="submit" class="btn btn-success"><b>Save</b></button>
+                    <a href="{% url 'poll_detail' id %}" class="btn btn-light"><b>Back</b></a>
                 </form>
             </div>
+        </div>
+    </div>
+    <div class="bg-first">
+        <div class="row">
+            <h2 class="title pl-2 ml-4 my-4">Add Choice</h2>
+            <a href="{% url 'add_choice' id %}"><img src="{% static 'image/plus.png' %}" class="mx-2 my-4" style="width:40px"></a>
+        </div>
+        <div class="row centeralign">
+            {% for choice in all_choice %}
+                <div class="col-5 my-2 non_action">
+                    <div class="btn btn-dark text-light rounded">
+                        <div class="row">
+                            <div class="col-4">
+                                <img src="{{ choice.image.url }}" class="w-75" style="height: 75px;">
+                            </div>
+                            <div class="col-7 centerpage">
+                                {{ choice.subject }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'delete_choice' choice.id %}" class="btn btn-danger">X</a>
+            {% endfor %}
         </div>
     </div>
 </div>

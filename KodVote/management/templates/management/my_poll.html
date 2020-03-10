@@ -36,6 +36,7 @@
                     </div>
                     <div class="col-8 text-light bg-dark rounded p-2 w-100">{{ email }}</div>
                 </div>
+                <a href="{% url 'create' %}" class="btn btn-warning my-4"><b>Create Poll</b></a>
             </div>
         </div>
         <div class="row">
@@ -46,7 +47,7 @@
                         <div>
                             <div class="row">
                                 <div class="col-10">
-                                    <a href="{% url 'edit_poll' polls.id %}" class="btn btn-warning text-light w-100 rounded my-2"><b>Edit</b></a>
+                                    <a href="{% url 'edit_poll' polls.id %}" class="btn btn-warning w-100 rounded my-2"><b>Edit</b></a>
                                 </div>
                                 <div class="col-2">
                                     <a href="{% url 'delete_poll' polls.id %}" class="btn btn-danger text-light w-100 rounded my-2"><b>X</b></a>
@@ -83,7 +84,7 @@
                         <div>
                             <div class="row">
                                 <div class="col-10">
-                                    <a href="{% url 'edit_poll' polls.id %}" class="btn btn-warning text-light w-100 rounded my-2"><b>Edit</b></a>
+                                    <a href="{% url 'edit_poll' polls.id %}" class="btn btn-warning w-100 rounded my-2"><b>Edit</b></a>
                                 </div>
                                 <div class="col-2">
                                     <a href="{% url 'delete_poll' polls.id %}" class="btn btn-danger text-light w-100 rounded my-2"><b>X</b></a>

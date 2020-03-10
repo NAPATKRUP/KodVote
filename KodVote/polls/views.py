@@ -47,7 +47,7 @@ def create_poll(request):
         if picture != None:
             poll.picture = picture
         poll.save()
-        return redirect('home')
+        return redirect('my_poll')
     context = {
         'fname' : user.first_name,
         'lname' : user.last_name
@@ -76,7 +76,9 @@ def poll_detail(request, poll_id):
     if poll.password == sentpass or poll.password == "":
         passed = True
     elif poll.password != sentpass and sentpass is not None:
-        msg = "Password incorrect"
+        msg = "Password incorrect!"
+
+    choices = poll.poll_choice_set.all()
 
     context = {
         'fname' : user.first_name,
@@ -91,7 +93,8 @@ def poll_detail(request, poll_id):
         'id' : poll_id,
         'status' : poll.is_active,
         'owned' : own,
-        'error' : msg
+        'error' : msg,
+        'all_choice' : choices
     }
     return render(request, 'polls/detail.html', context=context)
 
@@ -107,6 +110,9 @@ def edit_poll(request, poll_id):
         poll.password = request.POST.get('password').strip()
         poll.save()
         return redirect('poll_detail', poll_id)
+
+    choices = poll.poll_choice_set.all()
+
     context = {
         'fname' : user.first_name,
         'lname' : user.last_name,
@@ -115,7 +121,8 @@ def edit_poll(request, poll_id):
         'subject' : poll.subject,
         'detail' : poll.detail,
         'id' : poll_id,
-        'status' : poll.is_active
+        'status' : poll.is_active,
+        'all_choice' : choices
     }
     return render(request, 'polls/edit.html', context=context)
 
@@ -126,4 +133,40 @@ def close_poll(request, poll_id):
         poll.is_active = False
         poll.end_date = timezone.now()
         poll.save()
+        return redirect('poll_detail', poll_id)
     return redirect('my_poll')
+
+@login_required
+def add_choice(request, poll_id):
+    poll = Poll.objects.get(id=poll_id)
+    user = request.user
+    if user != poll.create_by:
+        return redirect('home')
+    if request.method == 'POST':
+        try:
+            image = request.FILES['image']
+        except:
+            image = None
+        choice = Poll_Choice(
+            subject = request.POST.get('subject'),
+            poll_id = poll
+        )
+        if image != None:
+            choice.image = image
+        choice.save()
+        return redirect('edit_poll', poll_id=poll.id)
+    context = {
+        'fname' : user.first_name,
+        'lname' : user.last_name,
+        'id' : poll_id
+    }
+    return render(request, 'polls/add_choice.html', context=context)
+
+@login_required
+def delete_choice(request, choice_id):
+    choice = Poll_Choice.objects.get(id=choice_id)
+    poll = choice.poll_id
+    if request.user != poll.create_by:
+        return redirect('home')
+    choice.delete()
+    return redirect('edit_poll', poll.id)

@@ -29,28 +29,28 @@
                         <p>&emsp; {{ edate }}</p>
                         <p class="text-right"><b>By @<u>{{ create_by }}</u></b></p>
                         {% if owned %}
-                            <a href="{% url 'edit_poll' id %}" class="btn btn-warning"><b>Edit</b></a>
                             {% if status %}
-                                <a href="{% url 'close_poll' id %}" class="btn btn-danger"><b>Close</b></a>
+                                <a href="{% url 'edit_poll' id %}" class="btn btn-warning"><b>Edit</b></a>
+                                <a href="{% url 'close_poll' id %}" class="btn btn-dark"><b>Close</b></a>
                             {% endif %}
-                            <a href="{% url 'delete_poll' id %}" class="btn btn-dark"><b>Delete</b></a>
+                            <a href="{% url 'delete_poll' id %}" class="btn btn-danger"><b>Delete</b></a>
                         {% endif %}
                     </div>
                     <div class="row m-4">
-
-                        <!-- <a href="" class="col-6 p-2">
-                            <div class="btn btn-dark w-100 text-light p-4 rounded">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <img src="{{ choice_picture }}" class="w-75 m-4">
-                                    </div>
-                                    <div class="col-6">
-                                        {{ choice_detail }}
+                        {% for choice in all_choice %}
+                            <a href="" class="col-6 py-2 non_action">
+                                <div class="btn btn-dark text-light rounded">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <img src="{{ choice.image.url }}" class="w-75" style="height: 75px;">
+                                        </div>
+                                        <div class="col-7 centerpage">
+                                            {{ choice.subject }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a> -->
-
+                            </a>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
