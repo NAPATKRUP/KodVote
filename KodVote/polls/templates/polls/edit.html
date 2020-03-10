@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Edit Poll
+{% endblock %}
+
+{% block name_user %}
+    {{ fname }} {{ lname }}
+{% endblock %}
+
+{% block content %}
+<div class="container bg-second p-4">
+    <div class="row">
+        <div class="col-5 centerpage">
+            <img src="{% static 'image/edit.png' %}" class="w-75 m-4 moving_updown">
+        </div>
+        <div class="col-7">
+            <h2 class="title pl-2 ml-4">Edit Poll</h2>
+            <div class="row mt-2">
+                <form method="POST" class="ml-4 p-4 w-100" action="{% url 'edit_poll' id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="subject">Subject *</label>
+                        <input type="text" class="form-control" name="subject" value="{{ subject }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="detail">Description *</label>
+                        <textarea class="form-control" name="detail" id="" cols="30" rows="4" required>{{ detail }}</textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label for="sdate">Start_Date</label>
+                            <input type="text" class="form-control" name="subject" value="{{ sdate|date:'d/m/Y H:i' }}" disabled>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="edate">End_Date</label>
+                            <input type="text" class="form-control" name="subject" value="{{ edate|date:'d/m/Y H:i' }}" disabled>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" name="password" value="{{ password }}">
+                        </div>
+                        {% if status %}
+                            <a href="{% url 'close_poll' id %}" class="btn btn-danger col-6 centerpage h-25 mt-4 p-3"><b>Close</b></a>
+                        {% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-warning"><b>Edit</b></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -20,25 +20,25 @@
                 <h2 class="title p-2 centerpage my-4">Welcome {{ fname }} to KodVote.com</h2>
                 <p>&emsp; This site is a project of "Web Programming (WebPro)", 
                     Faculty of Information Technology, King Mongkut's Institute of Technology Ladkrabang (KMITL).</p>
-                <p class="bg-dark text-light w-100 my-4 p-3 text-right">Let Start: 
-                    <a href="{% url 'create' %}" class="btn btn-warning">Create my poll</a>
-                    <a href="{% url 'my_poll' %}" class="btn btn-info">View my poll</a>
+                <p class="bg-dark text-light w-100 my-4 p-3 text-right"><b>Get Started : </b>
+                    <a href="{% url 'create' %}" class="btn btn-warning"><b>Create my poll</b></a>
+                    <a href="{% url 'my_poll' %}" class="btn btn-info"><b>View my poll</b></a>
                 </p>
             </div>
         </div>
         <div class="row">
             <div class="col-6 p-4 bg-second">
-                <h2 class="mt-2 ml-4 bg-light w-50 p-2 text-success text-center">Avaliable</h2>
+                <h2 class="mt-2 ml-4 bg-light w-50 p-2 text-success text-center">Available</h2>
                 <div class="slider1">
                     {% for polls in available %}
-                        <a href="" class="non_action">
+                        <a href="{% url 'poll_detail' polls.id %}" class="non_action">
                             <div class="card">
                                 <div class="centerpage mt-4">
-                                    <img src="{{ polls.picture.url }}" class="card-img-top w-75">
+                                    <img src="{{ polls.picture.url }}" class="card-img-top w-75" style="min-height: 290px;">
                                 </div>
                                 <div class="card-body">
                                     <p class="card-text">
-                                        <h4>{{ polls.subject }}</h4>
+                                        <h4>{{ polls.subject|truncatechars:22 }}</h4>
                                         <p>{{ polls.detail|truncatechars:35 }}</p>
                                     </p>
                                 </div>
@@ -58,14 +58,14 @@
                 <h2 class="mt-2 ml-4 bg-light w-50 p-2 text-danger text-center">Closed</h2>
                 <div class="slider2">
                     {% for polls in closed %}
-                        <a href="" class="non_action">
+                        <a href="{% url 'poll_detail' polls.id %}" class="non_action">
                             <div class="card">
                                 <div class="centerpage mt-4">
-                                    <img src="{{ polls.picture.url }}" class="card-img-top w-75">
+                                    <img src="{{ polls.picture.url }}" class="card-img-top w-75" style="min-height: 290px;">
                                 </div>
                                 <div class="card-body">
                                     <p class="card-text">
-                                        <h4>{{ polls.subject }}</h4>
+                                        <h4>{{ polls.subject|truncatechars:22 }}</h4>
                                         <p>{{ polls.detail|truncatechars:35 }}</p>
                                     </p>
                                 </div>

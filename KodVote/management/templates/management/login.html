@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-    <form method="POST" class="w-100" action="{% url 'login' %}" enctype="multipart/form-data">
+    <form method="POST" class="w-100" action="{% url 'login' %}">
         {% csrf_token %}
         <h1 class="text-center my-4 text-light">KodVote</h1>
         <div class="form-group text-light">
@@ -24,7 +24,7 @@
         {% if error %}
           <p class="text-light">{{error}}</p>
         {% endif %}
-        <input type="submit" value="Sign In" class="btn btn-dark mt-2 w-100">
+        <input type="submit" value="Log In" class="btn btn-dark mt-2 w-100">
         <a href="{% url 'register' %}" class="btn btn-light w-100 mt-1">Sign Up</a>
     </form>
 {% endblock %}

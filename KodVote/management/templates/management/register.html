@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-    <form method="POST" class="w-75" action="{% url 'register' %}" enctype="multipart/form-data">
+    <form method="POST" class="w-75" action="{% url 'register' %}">
         {% csrf_token %}
         <h1 class="my-4 text-light">Register</h1>
 

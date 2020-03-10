@@ -44,15 +44,22 @@
                 <div class="slider1">
                     {% for polls in available %}
                         <div>
-                            <a href="{% url 'poll_delete' polls.id %}" class="btn btn-danger text-light w-100 rounded myclose"><b>X</b></a>
-                            <a href="" class="non_action">
+                            <div class="row">
+                                <div class="col-10">
+                                    <a href="{% url 'edit_poll' polls.id %}" class="btn btn-warning text-light w-100 rounded my-2"><b>Edit</b></a>
+                                </div>
+                                <div class="col-2">
+                                    <a href="{% url 'delete_poll' polls.id %}" class="btn btn-danger text-light w-100 rounded my-2"><b>X</b></a>
+                                </div>
+                            </div>
+                            <a href="{% url 'poll_detail' polls.id %}" class="non_action">
                                 <div class="card">
                                     <div class="centerpage mt-4">
-                                        <img src="{{ polls.picture.url }}" class="card-img-top w-75">
+                                        <img src="{{ polls.picture.url }}" class="card-img-top w-75" style="min-height: 290px;">
                                     </div>
                                     <div class="card-body">
                                         <p class="card-text">
-                                            <h4>{{ polls.subject }}</h4>
+                                            <h4>{{ polls.subject|truncatechars:22 }}</h4>
                                             <p>{{ polls.detail|truncatechars:35 }}</p>
                                         </p>
                                     </div>
@@ -74,15 +81,22 @@
                 <div class="slider2">
                     {% for polls in closed %}
                         <div>
-                            <a href="{% url 'poll_delete' polls.id %}" class="btn btn-danger text-light w-100 rounded myclose"><b>X</b></a>
-                            <a href="" class="non_action">
+                            <div class="row">
+                                <div class="col-10">
+                                    <a href="{% url 'edit_poll' polls.id %}" class="btn btn-warning text-light w-100 rounded my-2"><b>Edit</b></a>
+                                </div>
+                                <div class="col-2">
+                                    <a href="{% url 'delete_poll' polls.id %}" class="btn btn-danger text-light w-100 rounded my-2"><b>X</b></a>
+                                </div>
+                            </div>
+                            <a href="{% url 'poll_detail' polls.id %}" class="non_action">
                                 <div class="card">
                                     <div class="centerpage mt-4">
-                                        <img src="{{ polls.picture.url }}" class="card-img-top w-75">
+                                        <img src="{{ polls.picture.url }}" class="card-img-top w-75" style="min-height: 290px;">
                                     </div>
                                     <div class="card-body">
                                         <p class="card-text">
-                                            <h4>{{ polls.subject }}</h4>
+                                            <h4>{{ polls.subject|truncatechars:22 }}</h4>
                                             <p>{{ polls.detail|truncatechars:35 }}</p>
                                         </p>
                                     </div>

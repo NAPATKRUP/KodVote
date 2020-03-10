@@ -35,7 +35,7 @@ def register(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         if (User.objects.filter(username=username).exists()):
-            context['error'] = 'Username already in use'
+            context['error'] = 'Username is already used'
             context['fname'] = first_name
             context['lname'] = last_name
             context['email'] = email

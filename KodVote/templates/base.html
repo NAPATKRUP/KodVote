@@ -29,8 +29,10 @@
         <div class="form-inline my-2 my-lg-0 bg-light pr-2 rounded">
             <li class="nav-item dropdown btn btn-light">
                 <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {% block name_user %}
-                    {% endblock %}
+                    <b>
+                        {% block name_user %}
+                        {% endblock %}
+                    </b>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="{% url 'home' %}">Home</a>
@@ -39,13 +41,13 @@
                     <a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a>
                 </div>
             </li>
-            <a href="{% url 'logout' %}" class="btn btn-danger text-light my-2 my-sm-0" type="submit">Logout</a>
+            <a href="{% url 'logout' %}" class="btn btn-danger text-light my-2 my-sm-0" type="submit"><b>Logout</b></a>
         </div>
     </nav>
     {% block content %}
     {% endblock %}
     <footer class="bg-first w-100 p-4 text-dark">
-        <h6 class="text-center">KodVote by Napat_Ar</h6>
+        <h6 class="text-center">KodVote by <b>@Napat_Ar</b></h6>
     </footer>
     <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/moment.js' %}"></script>

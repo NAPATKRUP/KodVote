@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+{% csrf_token %}
+
+{% block title %}
+    Poll Detail
+{% endblock %}
+
+{% block name_user %}
+    {{ fname }} {{ lname }}
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid bg-second p-4">
+        {% if passed %}
+            <div class="row">
+                <div class="col-5 centerpage">
+                    <img src="{{ picture }}" class="w-75 m-4 moving_updown">
+                </div>
+                <div class="col-7">
+                    <h2 class="title pl-2 ml-4">Poll Detail</h2>
+                    <div class="m-4 bg-first p-4 rounded">
+                        <h4>Subject : {{ subject }}</h4>
+                        <h4 class="mt-3">Description</h4>
+                        <p>&emsp; {{ detail }}</p>
+                        <h4 class="mt-3">Start Date</h4>
+                        <p>&emsp; {{ sdate }}</p>
+                        <h4 class="mt-3">End Date</h4>
+                        <p>&emsp; {{ edate }}</p>
+                        <p class="text-right"><b>By @<u>{{ create_by }}</u></b></p>
+                        {% if owned %}
+                            <a href="{% url 'edit_poll' id %}" class="btn btn-warning"><b>Edit</b></a>
+                            {% if status %}
+                                <a href="{% url 'close_poll' id %}" class="btn btn-danger"><b>Close</b></a>
+                            {% endif %}
+                            <a href="{% url 'delete_poll' id %}" class="btn btn-dark"><b>Delete</b></a>
+                        {% endif %}
+                    </div>
+                    <div class="row m-4">
+
+                        <!-- <a href="" class="col-6 p-2">
+                            <div class="btn btn-dark w-100 text-light p-4 rounded">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <img src="{{ choice_picture }}" class="w-75 m-4">
+                                    </div>
+                                    <div class="col-6">
+                                        {{ choice_detail }}
+                                    </div>
+                                </div>
+                            </div>
+                        </a> -->
+
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="centerpage">
+                <div class="bg-dark text-light w-50 p-4 m-4">
+                    <h3>This Poll requires a password</h3>
+                    <form method="GET" class="w-100" action="{% url 'poll_detail' id %}">
+                        <div class="form-group">
+                            <label for="password">Password *</label>
+                            <input type="password" class="form-control" name='password' required>
+                        </div>
+                        {% if error != "" %}
+                            <p class="text-light">{{error}}</p>
+                        {% endif %}
+                        <input type="submit" class="btn btn-info" value="Enter">
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
