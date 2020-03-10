@@ -35,7 +35,9 @@
                             {% endif %}
                             <a href="{% url 'delete_poll' id %}" class="btn btn-danger"><b>Delete</b></a>
                         {% endif %}
-                        <p class="mt-4"><u>Note</u> : You can vote only one time, please check before sending</p>
+                    </div>
+                    <div class="mx-4 bg-first p-2 rounded">
+                        <p><u>Note</u> : You can vote only one time, please check before sending</p>
                     </div>
                     <div class="row m-4">
                         {% for choice in all_choice %}
@@ -58,6 +60,17 @@
                         {% endfor %}
                     </div>
                 </div>
+            </div>
+            {% if is_active == False or check_vote %}
+            <div class="row">
+                <div class="col-5"></div>
+                <div class="col-7">
+                    <h2 class='title pl-2 ml-4'>Result</h2>
+                    <div class="m-4 p-4 bg-third rounded">
+                        {{ graph|safe }}
+                    </div>
+                </div>
+            {% endif %}
             </div>
         {% else %}
             <div class="centerpage">

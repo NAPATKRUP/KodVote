@@ -2,6 +2,10 @@
   width: 400px;
   margin: 0 auto;
 }
+.slick-dots li button {
+    text-indent: -9999px;
+    overflow:hidden;
+}
 .slick-slide {
   margin: 0 5px;
 }
