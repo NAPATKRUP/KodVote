@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from .models import Poll, Poll_Vote, Poll_Choice
 from datetime import datetime
 from django.utils import timezone
+import pygal
 
 @login_required
 def index(request):
@@ -94,7 +95,8 @@ def poll_detail(request, poll_id):
         'status' : poll.is_active,
         'owned' : own,
         'error' : msg,
-        'all_choice' : choices
+        'all_choice' : choices,
+        'is_active' : poll.is_active
     }
     check_vote = False
     votes = poll.poll_vote_set.all()
@@ -103,6 +105,13 @@ def poll_detail(request, poll_id):
             check_vote = True
             context['check_vote'] = vote.choice_id.subject
             break
+
+    if not poll.is_available() or check_vote:
+        pie_chart = pygal.Pie()
+        pie_chart.title = f"Result of {poll.subject}"
+        for choice in choices:
+            pie_chart.add(choice.subject, choice.poll_vote_set.all().count())
+            context['graph'] = pie_chart.render().decode('utf-8')
 
     return render(request, 'polls/detail.html', context=context)
 
@@ -128,6 +137,7 @@ def edit_poll(request, poll_id):
         'edate' : poll.end_date,
         'subject' : poll.subject,
         'detail' : poll.detail,
+        'password' : poll.password,
         'id' : poll_id,
         'status' : poll.is_active,
         'all_choice' : choices
@@ -187,6 +197,8 @@ def vote_choice(request, choice_id):
     for vote in votes:
         if vote.poll_id == poll:
             return redirect('poll_detail', poll.id)
+    if not poll.is_active:
+        return redirect('poll_detail', poll.id)
     vote = Poll_Vote.objects.create(
         poll_id = poll,
         choice_id = choice,

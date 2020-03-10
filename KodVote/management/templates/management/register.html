@@ -43,10 +43,10 @@
         {% endif %}
         <div class="row">
             <div class="col-md-6 p-1">
-                <input type="submit" value="Sign Up" class="btn btn-dark w-100">
+                <a href="{% url 'login' %}" class="btn btn-light w-100">Login</a>
             </div>
             <div class="col-md-6 p-1">
-                <a href="{% url 'login' %}" class="btn btn-light w-100">Login</a>
+                <input type="submit" value="Sign Up" class="btn btn-dark w-100">
             </div>
         </div>
     </form>
