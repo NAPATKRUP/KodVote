@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+{% csrf_token %}
+
+{% block title %}
+    My Poll
+{% endblock %}
+
+{% block name_user %}
+    {{ fname }} {{ lname }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row m-4">
+            <div class="col-4">
+                <img src="{% static 'image/user.png' %}" class="w-75 m-4 moving_updown">
+            </div>
+            <div class="col-8">
+                <h2 class="title pl-2 mt-4 pt-2">My Poll</h2>
+                <div class="row mt-4">
+                    <div class="col-4">
+                        <h4>Full-Name</h4>
+                    </div>
+                    <div class="col-8 text-light bg-dark rounded p-2 w-100">{{ fname }} {{ lname }}</div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-4">
+                        <h4>Username</h4>
+                    </div>
+                    <div class="col-8 text-light bg-dark rounded p-2 w-100">{{ username }}</div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-4">
+                        <h4>Email</h4>
+                    </div>
+                    <div class="col-8 text-light bg-dark rounded p-2 w-100">{{ email }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6 p-4 bg-third">
+                <h3 class="mt-2 ml-4 bg-light w-50 p-2 text-success text-center">Avaliable</h3>
+                <div class="slider1">
+                    {% for polls in available %}
+                        <div>
+                            <a href="{% url 'poll_delete' polls.id %}" class="btn btn-danger text-light w-100 rounded myclose"><b>X</b></a>
+                            <a href="" class="non_action">
+                                <div class="card">
+                                    <div class="centerpage mt-4">
+                                        <img src="{{ polls.picture.url }}" class="card-img-top w-75">
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">
+                                            <h4>{{ polls.subject }}</h4>
+                                            <p>{{ polls.detail|truncatechars:35 }}</p>
+                                        </p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <small class="text-secondary">
+                                            <b>Start</b> : {{ polls.start_date|date:'d/m/Y (H:i)' }}
+                                            <b>End</b> : {{ polls.end_date|date:'d/m/Y (H:i)' }}<br>
+                                            <b>By</b> : {{ polls.create_by }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-6 p-4 bg-second">
+                <h3 class="mt-2 ml-4 bg-light w-50 p-2 text-danger text-center">Closed</h3>
+                <div class="slider2">
+                    {% for polls in closed %}
+                        <div>
+                            <a href="{% url 'poll_delete' polls.id %}" class="btn btn-danger text-light w-100 rounded myclose"><b>X</b></a>
+                            <a href="" class="non_action">
+                                <div class="card">
+                                    <div class="centerpage mt-4">
+                                        <img src="{{ polls.picture.url }}" class="card-img-top w-75">
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">
+                                            <h4>{{ polls.subject }}</h4>
+                                            <p>{{ polls.detail|truncatechars:35 }}</p>
+                                        </p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <small class="text-secondary">
+                                            <b>End</b> : {{ polls.end_date|date:'d/m/Y (H:i)' }}
+                                            <b>By</b> : {{ polls.create_by }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
