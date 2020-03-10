@@ -37,12 +37,12 @@ def create_poll(request):
         end_date = datetime.strptime(request.POST.get('edate'), '%d/%m/%Y %H:%M')
         password = request.POST.get('password').strip()
         poll = Poll(
-                subject=subject,
-                detail=detail,
-                start_date=start_date,
-                end_date=end_date,
-                password=password,
-                create_by=user
+                subject = subject,
+                detail = detail,
+                start_date = start_date,
+                end_date = end_date,
+                password = password,
+                create_by = user
         )
         if picture != None:
             poll.picture = picture
@@ -96,6 +96,14 @@ def poll_detail(request, poll_id):
         'error' : msg,
         'all_choice' : choices
     }
+    check_vote = False
+    votes = poll.poll_vote_set.all()
+    for vote in votes:
+        if vote.vote_by == request.user:
+            check_vote = True
+            context['check_vote'] = vote.choice_id.subject
+            break
+
     return render(request, 'polls/detail.html', context=context)
 
 @login_required
@@ -154,7 +162,7 @@ def add_choice(request, poll_id):
         if image != None:
             choice.image = image
         choice.save()
-        return redirect('edit_poll', poll_id=poll.id)
+        return redirect('edit_poll', poll.id)
     context = {
         'fname' : user.first_name,
         'lname' : user.last_name,
@@ -170,3 +178,18 @@ def delete_choice(request, choice_id):
         return redirect('home')
     choice.delete()
     return redirect('edit_poll', poll.id)
+
+@login_required
+def vote_choice(request, choice_id):
+    choice = Poll_Choice.objects.get(id=choice_id)
+    poll = choice.poll_id
+    votes = request.user.poll_vote_set.all()
+    for vote in votes:
+        if vote.poll_id == poll:
+            return redirect('poll_detail', poll.id)
+    vote = Poll_Vote.objects.create(
+        poll_id = poll,
+        choice_id = choice,
+        vote_by = request.user
+    )
+    return redirect('poll_detail', poll.id)

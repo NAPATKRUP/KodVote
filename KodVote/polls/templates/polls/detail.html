@@ -35,11 +35,16 @@
                             {% endif %}
                             <a href="{% url 'delete_poll' id %}" class="btn btn-danger"><b>Delete</b></a>
                         {% endif %}
+                        <p class="mt-4"><u>Note</u> : You can vote only one time, please check before sending</p>
                     </div>
                     <div class="row m-4">
                         {% for choice in all_choice %}
-                            <a href="" class="col-6 py-2 non_action">
+                            <a href="{% url 'vote_choice' choice.id %}" class="col-6 py-2 non_action">
+                            {% if choice.subject == check_vote %}
+                                <div class="btn btn-light text-dark rounded">
+                            {% else %}
                                 <div class="btn btn-dark text-light rounded">
+                            {% endif %}
                                     <div class="row">
                                         <div class="col-4">
                                             <img src="{{ choice.image.url }}" class="w-75" style="height: 75px;">
