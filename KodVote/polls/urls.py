@@ -13,6 +13,6 @@ urlpatterns = [
     # path('vote_poll/<int:choice_id>', views.vote_poll, name='vote_poll'),
 
     # choice
-    # path('add_choice/<int:poll_id>', views.add_choice, name='add_choice'),
-    # path('delete_choice/<int:choice_id>', views.delete_choice, name='delete_choice')
+    path('add_choice/<int:poll_id>', views.add_choice, name='add_choice'),
+    path('delete_choice/<int:choice_id>', views.delete_choice, name='delete_choice')
 ]
