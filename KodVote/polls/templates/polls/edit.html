@@ -18,15 +18,15 @@
         <div class="col-7">
             <h2 class="title pl-2 ml-4">Edit Poll</h2>
             <div class="row mt-2">
-                <form method="POST" class="ml-4 p-4 w-100" action="{% url 'edit_poll' id %}">
+                <form method="POST" class="ml-4 p-4 w-100" action="{% url 'edit_poll' id %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="subject">Subject *</label>
                         <input type="text" class="form-control" name="subject" value="{{ subject }}" required>
                     </div>
                     <div class="form-group">
-                        <label for="detail">Description *</label>
-                        <textarea class="form-control" name="detail" id="" cols="30" rows="4" required>{{ detail }}</textarea>
+                        <label for="detail">Description</label>
+                        <textarea class="form-control" name="detail" id="" cols="30" rows="4">{{ detail }}</textarea>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-6">
@@ -35,7 +35,12 @@
                         </div>
                         <div class="form-group col-6">
                             <label for="edate">End_Date</label>
-                            <input type="text" class="form-control" name="subject" value="{{ edate|date:'d/m/Y H:i' }}" disabled>
+                            <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                                <input value='{{ edate|date:"d/m/Y H:i" }}' name='edate' type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2" required/>
+                                <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="form-row">
@@ -43,12 +48,19 @@
                             <label for="password">Password</label>
                             <input type="password" class="form-control" name="password" value="{{ password }}">
                         </div>
-                        {% if status %}
-                            <a href="{% url 'close_poll' id %}" class="btn btn-danger col-6 centerpage h-25 mt-4 p-3"><b>Close</b></a>
-                        {% endif %}
+                        <div class="form-group col-6">
+                            <label for="picture">Picture</label>
+                            <div class="custom-file">
+                                <input type="file" class='custom-file-input' name='picture' id="input-file">
+                                <label class="custom-file-label" for="input-file">{{ picture }}</label>
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-success"><b>Save</b></button>
                     <a href="{% url 'poll_detail' id %}" class="btn btn-light"><b>Back</b></a>
+                    {% if status %}
+                        <a href="{% url 'close_poll' id %}" class="btn btn-dark"><b>Close</b></a>
+                    {% endif %}
                 </form>
             </div>
         </div>
