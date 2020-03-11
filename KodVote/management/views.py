@@ -110,8 +110,8 @@ def my_poll(request):
     user = request.user
 
     # Get all my poll
-    start_polls = Poll.objects.filter(create_by=request.user).order_by('-start_date')
-    end_polls = Poll.objects.filter(create_by=request.user).order_by('-end_date')
+    start_polls = Poll.objects.filter(create_by=user).order_by('-start_date')
+    end_polls = Poll.objects.filter(create_by=user).order_by('-end_date')
     available, closed = [], []
     for poll in start_polls:
         if poll.is_available():
