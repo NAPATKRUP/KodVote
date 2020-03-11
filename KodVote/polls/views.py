@@ -1,35 +1,45 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from .models import Poll, Poll_Vote, Poll_Choice
 from datetime import datetime
 from django.utils import timezone
 import pygal
 
-@login_required
+@login_required(login_url='login')
 def index(request):
     user = request.user
-    polls = Poll.objects.all().order_by('start_date')
+
+    # Add poll list
+    start_polls = Poll.objects.all().order_by('-start_date')
+    end_polls = Poll.objects.all().order_by('-end_date')
     available, closed = [], []
-    for poll in polls:
+    for poll in start_polls:
         if poll.is_available():
             available.append(poll)
-        else:
+    for poll in end_polls:
+        if not poll.is_available():
             closed.append(poll)
+
+    # Send context
     context = {
         'fname' : user.first_name,
         'lname' : user.last_name,
         'available' : available,
         'closed' : closed
     }
+
     return render(request, template_name='polls/index.html', context=context)
 
-@login_required
+
+@login_required(login_url='login')
 def create_poll(request):
     user = request.user
+
+    # GET detail in form
     if request.method == 'POST':
-        subject = request.POST.get('subject')
-        detail = request.POST.get('detail')
+        subject = request.POST.get('subject').strip()
+        detail = request.POST.get('detail').strip()
         try:
             picture = request.FILES['picture']
         except:
@@ -37,6 +47,8 @@ def create_poll(request):
         start_date = datetime.strptime(request.POST.get('sdate'), '%d/%m/%Y %H:%M')
         end_date = datetime.strptime(request.POST.get('edate'), '%d/%m/%Y %H:%M')
         password = request.POST.get('password').strip()
+
+        # Add poll to DB
         poll = Poll(
                 subject = subject,
                 detail = detail,
@@ -48,39 +60,64 @@ def create_poll(request):
         if picture != None:
             poll.picture = picture
         poll.save()
+
         return redirect('my_poll')
+
+    # Send Context
     context = {
         'fname' : user.first_name,
         'lname' : user.last_name
     }
+
     return render(request, 'polls/create.html', context=context)
 
-@login_required
+
+@login_required(login_url='login')
 def delete_poll(request, poll_id):
     user = request.user
+
+    # Get poll by id and delete poll
     poll = Poll.objects.get(id=poll_id)
     if poll.create_by == user:
         poll.delete()
+
     return redirect('my_poll')
 
-@login_required
+
+@login_required(login_url='login')
 def poll_detail(request, poll_id):
     user = request.user
+
+    # Get poll detail by id
     poll = Poll.objects.get(id=poll_id)
+
+    # Check own
     own = True
-    passed = False
-    msg = ""
     if user != poll.create_by:
         own = False
 
-    sentpass = request.GET.get('password')
-    if poll.password == sentpass or poll.password == "":
-        passed = True
-    elif poll.password != sentpass and sentpass is not None:
-        msg = "Password incorrect!"
+    # If check password before vote
+    passed = True
+    msg = ""
 
+    # If check password before view poll
+    # passed = False
+    # msg = ""
+    # sentpass = request.GET.get('password')
+    # if poll.password == sentpass or poll.password == "":
+    #     passed = True
+    # elif poll.password != sentpass and sentpass is not None:
+    #     msg = "Password incorrect!"
+
+    # Check not-open poll
+    not_open = False
+    if timezone.now() < poll.start_date:
+        not_open = True
+
+    # Get all choice in poll
     choices = poll.poll_choice_set.all()
 
+    # Send context
     context = {
         'fname' : user.first_name,
         'lname' : user.last_name,
@@ -96,8 +133,11 @@ def poll_detail(request, poll_id):
         'owned' : own,
         'error' : msg,
         'all_choice' : choices,
-        'is_active' : poll.is_active
+        'is_active' : poll.is_active,
+        'not_open' : not_open
     }
+
+    # Check vote status
     check_vote = False
     votes = poll.poll_vote_set.all()
     for vote in votes:
@@ -106,6 +146,7 @@ def poll_detail(request, poll_id):
             context['check_vote'] = vote.choice_id.subject
             break
 
+    # Create pygal graph
     if not poll.is_available() or check_vote:
         pie_chart = pygal.Pie()
         pie_chart.title = f"Result of {poll.subject}"
@@ -115,21 +156,38 @@ def poll_detail(request, poll_id):
 
     return render(request, 'polls/detail.html', context=context)
 
-@login_required
+
+@login_required(login_url='login')
 def edit_poll(request, poll_id):
     user = request.user
+
+    # Get poll detail by id
     poll = Poll.objects.get(id=poll_id)
+
+    # Check permission
     if request.user != poll.create_by:
         return redirect('home')
+
+    # Get detail in form and save to DB
     if request.method == 'POST':
-        poll.subject = request.POST.get('subject')
-        poll.detail = request.POST.get('detail')
+        poll.subject = request.POST.get('subject').strip()
+        poll.detail = request.POST.get('detail').strip()
         poll.password = request.POST.get('password').strip()
+        poll.end_date = datetime.strptime(request.POST.get('edate'), '%d/%m/%Y %H:%M')
+        try:
+            picture = request.FILES['picture']
+        except:
+            picture = None
+        if picture != None:
+            poll.picture = picture
         poll.save()
+
         return redirect('poll_detail', poll_id)
 
+    # Get all choice in poll
     choices = poll.poll_choice_set.all()
 
+    # Send context
     context = {
         'fname' : user.first_name,
         'lname' : user.last_name,
@@ -138,70 +196,123 @@ def edit_poll(request, poll_id):
         'subject' : poll.subject,
         'detail' : poll.detail,
         'password' : poll.password,
+        'picture' : poll.picture,
         'id' : poll_id,
         'status' : poll.is_active,
         'all_choice' : choices
     }
+
     return render(request, 'polls/edit.html', context=context)
 
-@login_required
+
+@login_required(login_url='login')
 def close_poll(request, poll_id):
+    user = request.user
+
+    # Get poll detail by id
     poll = Poll.objects.get(id=poll_id)
-    if poll.create_by == request.user and poll.is_active == True:
+
+    # Check status
+    if poll.create_by == user and poll.is_active == True:
         poll.is_active = False
         poll.end_date = timezone.now()
         poll.save()
         return redirect('poll_detail', poll_id)
+
     return redirect('my_poll')
 
-@login_required
+
+@login_required(login_url='login')
 def add_choice(request, poll_id):
-    poll = Poll.objects.get(id=poll_id)
     user = request.user
+
+    # Get poll detail by id
+    poll = Poll.objects.get(id=poll_id)
+
+    # Check permission
     if user != poll.create_by:
         return redirect('home')
+
+    # Get detail in form
     if request.method == 'POST':
+        subject = request.POST.get('subject').strip()
         try:
             image = request.FILES['image']
         except:
             image = None
+
+        # Add choice to DB
         choice = Poll_Choice(
-            subject = request.POST.get('subject'),
+            subject = subject,
             poll_id = poll
         )
         if image != None:
             choice.image = image
         choice.save()
+
         return redirect('edit_poll', poll.id)
+
+    # Send Context
     context = {
         'fname' : user.first_name,
         'lname' : user.last_name,
         'id' : poll_id
     }
+
     return render(request, 'polls/add_choice.html', context=context)
 
-@login_required
+
+@login_required(login_url='login')
 def delete_choice(request, choice_id):
+    user = request.user
+
+    # Get choice by id and delete
     choice = Poll_Choice.objects.get(id=choice_id)
     poll = choice.poll_id
-    if request.user != poll.create_by:
+    if user != poll.create_by:
         return redirect('home')
     choice.delete()
+
     return redirect('edit_poll', poll.id)
 
-@login_required
+
+@login_required(login_url='login')
 def vote_choice(request, choice_id):
+    user = request.user
+
+    # Get choice and poll by id
     choice = Poll_Choice.objects.get(id=choice_id)
     poll = choice.poll_id
-    votes = request.user.poll_vote_set.all()
+
+    # Check vote
+    votes = user.poll_vote_set.all()
     for vote in votes:
         if vote.poll_id == poll:
             return redirect('poll_detail', poll.id)
-    if not poll.is_active:
+
+    # Check status
+    if not poll.is_available():
         return redirect('poll_detail', poll.id)
-    vote = Poll_Vote.objects.create(
-        poll_id = poll,
-        choice_id = choice,
-        vote_by = request.user
-    )
+
+    # Add vote status to DB
+    if poll.password == '':
+        vote = Poll_Vote.objects.create(
+            poll_id=poll,
+            choice_id=choice,
+            vote_by=request.user
+        )
+    else:
+        password = request.POST.get('password')
+        if password is None:
+            return render(request, 'polls/detail.html', context={'passed': False, 'choice': choice, 'msg': ''})
+        else:
+            if password == poll.password:
+                vote = Poll_Vote.objects.create(
+                    poll_id=poll,
+                    choice_id=choice,
+                    vote_by=request.user
+                )
+            else:
+                return render(request, 'polls/detail.html', context={'passed': False, 'choice': choice, 'msg': 'Password incorrect!'})
+
     return redirect('poll_detail', poll.id)

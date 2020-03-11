@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load static %}
-{% csrf_token %}
 
 {% block title %}
     Poll Detail
@@ -29,8 +28,10 @@
                         <p>&emsp; {{ edate }}</p>
                         <p class="text-right"><b>By @<u>{{ create_by }}</u></b></p>
                         {% if owned %}
-                            {% if status %}
+                            {% if status or not_open %}
                                 <a href="{% url 'edit_poll' id %}" class="btn btn-warning"><b>Edit</b></a>
+                            {% endif %}
+                            {% if status %}
                                 <a href="{% url 'close_poll' id %}" class="btn btn-dark"><b>Close</b></a>
                             {% endif %}
                             <a href="{% url 'delete_poll' id %}" class="btn btn-danger"><b>Delete</b></a>
@@ -72,11 +73,13 @@
                 </div>
             {% endif %}
             </div>
+        
         {% else %}
             <div class="centerpage">
                 <div class="bg-dark text-light w-50 p-4 m-4">
                     <h3>This Poll requires a password</h3>
-                    <form method="GET" class="w-100" action="{% url 'poll_detail' id %}">
+                    <form method="POST" class="w-100" action="{% url 'vote_choice' choice.id %}">
+                        {% csrf_token %}
                         <div class="form-group">
                             <label for="password">Password *</label>
                             <input type="password" class="form-control" name='password' required>
