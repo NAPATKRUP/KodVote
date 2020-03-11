@@ -141,7 +141,7 @@ def poll_detail(request, poll_id):
     check_vote = False
     votes = poll.poll_vote_set.all()
     for vote in votes:
-        if vote.vote_by == request.user:
+        if vote.vote_by == user:
             check_vote = True
             context['check_vote'] = vote.choice_id.subject
             break
@@ -165,7 +165,7 @@ def edit_poll(request, poll_id):
     poll = Poll.objects.get(id=poll_id)
 
     # Check permission
-    if request.user != poll.create_by:
+    if user != poll.create_by:
         return redirect('home')
 
     # Get detail in form and save to DB
@@ -299,20 +299,20 @@ def vote_choice(request, choice_id):
         vote = Poll_Vote.objects.create(
             poll_id=poll,
             choice_id=choice,
-            vote_by=request.user
+            vote_by=user
         )
     else:
         password = request.POST.get('password')
         if password is None:
-            return render(request, 'polls/detail.html', context={'passed': False, 'choice': choice, 'msg': ''})
+            return render(request, 'polls/detail.html', context={'passed': False, 'choice': choice, 'error': ''})
         else:
             if password == poll.password:
                 vote = Poll_Vote.objects.create(
                     poll_id=poll,
                     choice_id=choice,
-                    vote_by=request.user
+                    vote_by=user
                 )
             else:
-                return render(request, 'polls/detail.html', context={'passed': False, 'choice': choice, 'msg': 'Password incorrect!'})
+                return render(request, 'polls/detail.html', context={'passed': False, 'choice': choice, 'error': 'Password incorrect!'})
 
     return redirect('poll_detail', poll.id)
